@@ -35,9 +35,11 @@ As of now, we only focus on the levelset layers since that is the filtration use
 Our PD layer provides a batched levelset layer assuming the same lattice simplicial complex for the entire batch.
 However, we don't prevent you from varying sampling range/density for each volume in the batch as long as you don't 
 violate the orientedness of the underlying simplicial complex.
+Note that PDs are triangulation-invariant so the query point positions for SDF don't matter as long as they don't 
+violate the orientedness of the implied simplicial complex
 
 We provide a simple example to illustrate the batched levelset layer API. We generalized an underdetermined 
-least-squares training with enforcing a 2D hole through our batched levelset layer to show the usage.
+least-squares training while enforcing a 2D hole through our batched levelset layer to show the usage.
 The example can be found at `examples/train_batched_levelset.py`.
 
 ![BatchedLevelSet Training](imgs/noisy_circle.png)
@@ -45,11 +47,11 @@ The example can be found at `examples/train_batched_levelset.py`.
 Specifically, our batched levelset PD layer has the following signature:
 ```
 # size: (width, height, depth) - size tuple for 3D volume sample array input dimensions
-# is_sublevel: sublevel or superlevel persistence (for SDF, we shall use superlevel and set is_sublevel=False)
-pdlayer = topologylayer.nn.BatchedLevelSetLayer3D(size, is_sublevel)
+# is_sublevel: sublevel or superlevel persistence (for SDF, we shall use superlevel and set sublevel=False)
+pdlayer = topologylayer.nn.BatchedLevelSetLayer3D(size, sublevel)
 ```
 
-During forward pass, one can optionally specify a minimal persistence threshold to enable a sparse calculation optimization.
+During the forward pass, one can optionally specify a minimal persistence threshold to enable a sparse calculation optimization.
 The minimal persistence threshold will remove PD points with `|birth - death| < min_pers` to save computation costs.
 ```
 # batch_volume: a torch.Tensor with shape [B, W, H, D], B is batch size
@@ -72,7 +74,7 @@ One can construct a Wasserstein PD Distance layer in the following way:
 wd = topologylayer.nn.WassersteinDistanceLayer(norm="L2")
 ```
 
-During forward pass, we compute distances between two lists of tensors:
+During the forward pass, we compute distances between two lists of tensors:
 ```
 # Pts1, Pts2: List[torch.Tensor] of shape [(b1, m1, d), ...] and [(b1, n1, d), ...]
 # dists: List[torch.Tensor]
