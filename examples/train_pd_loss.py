@@ -3,11 +3,8 @@
 #
 # Authored by Liyan Chen (liyanc@cs.utexas.edu)
 #
-import time
 import tqdm
 import torch
-import matplotlib
-import pygmtools as pygm
 
 from torch.optim import Adam
 from torch.optim.lr_scheduler import OneCycleLR
@@ -15,7 +12,6 @@ from topologylayer.nn import WassersteinDistanceLayer
 from matplotlib import pyplot as plt
 
 plt.style.use('ggplot')
-pygm.set_backend('pytorch')
 
 torch.manual_seed(0)
 
